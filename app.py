@@ -29,7 +29,7 @@ def pertumbuhan(nilai_sekarang, nilai_lalu):
 # APLIKASI STREAMLIT
 # ================================
 
-st.title("📊 APBD Analyzer + Rasio Keuangan + Interpretasi AI 
+st.title("📊 APBD Analyzer + Rasio Keuangan + Interpretasi AI ")
 
 uploaded = st.file_uploader("Upload file APBD (Excel)", type=["xlsx"])
 
