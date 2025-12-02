@@ -11,9 +11,9 @@ def rasio_kemandirian(pad, transfer):
 
 def rasio_efektivitas(realisasi_pad, target_pad):
     return realisasi_pad / target_pad if target_pad != 0 else 0
-
-def rasio_efisiensi(belanja_operasi, pendapatan_daerah):
-    return belanja_operasi / pendapatan_daerah if pendapatan_daerah != 0 else 0
+    
+def rasio_efisiensi(realisasi_belanja, anggaran_belanja):
+    return realisasi_belanja / anggaran_belanja if anggaran_belanja != 0 else 0
 
 def rasio_bo(belanja_operasi, total_belanja):
     return belanja_operasi / total_belanja if total_belanja != 0 else 0
@@ -48,12 +48,14 @@ if uploaded:
     pendapatan_daerah = df['Pendapatan_Daerah'].sum()
     target_pad = df['Target_PAD'].sum()
     realisasi_pad = df['Realisasi_PAD'].sum()
+    anggaran_belanja = df['Anggaran_Belanja'].sum()
+
 
     # Hitung rasio
     hasil = {
         "Rasio Kemandirian": rasio_kemandirian(pad, transfer),
         "Rasio Efektivitas PAD": rasio_efektivitas(realisasi_pad, target_pad),
-        "Rasio Efisiensi": rasio_efisiensi(belanja_operasi, pendapatan_daerah),
+        "Rasio Efisiensi": rasio_efisiensi(total_belanja, anggaran_belanja),
         "Rasio Belanja Operasi": rasio_bo(belanja_operasi, total_belanja),
         "Rasio Belanja Modal": rasio_bm(belanja_modal, total_belanja)
     }
