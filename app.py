@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 
 # ================================
-# FUNGSI PERHITUNGAN RASIO (DULUNYA rasio.py)
+# FUNGSI PERHITUNGAN RASIO
 # ================================
 
 def rasio_kemandirian(pad, transfer):
@@ -29,17 +29,35 @@ def pertumbuhan(nilai_sekarang, nilai_lalu):
 # APLIKASI STREAMLIT
 # ================================
 
-st.title("📊 APBD Analyzer + Rasio Keuangan + Interpretasi AI (Groq)")
+st.title("📊 APBD Analyzer + Rasio Keuangan + Interpretasi AI 
 
 uploaded = st.file_uploader("Upload file APBD (Excel)", type=["xlsx"])
 
 if uploaded:
-    df = pd.read_excel(uploaded)
+
+    try:
+        df = pd.read_excel(uploaded)
+        st.success("File berhasil dibaca!")
+    except Exception as e:
+        st.error(f"Gagal membaca file Excel: {e}")
+        st.stop()
 
     st.subheader("📌 Data APBD")
     st.dataframe(df)
 
-    # Baca kolom dari Excel
+    # Validasi kolom
+    required_cols = [
+        "PAD", "Dana_Transfer", "Belanja_Operasi", "Belanja_Modal",
+        "Total_Belanja", "Pendapatan_Daerah", "Target_PAD",
+        "Realisasi_PAD", "Anggaran_Belanja"
+    ]
+
+    for col in required_cols:
+        if col not in df.columns:
+            st.error(f"Kolom '{col}' tidak ditemukan di Excel.")
+            st.stop()
+
+    # Baca nilai
     pad = df['PAD'].sum()
     transfer = df['Dana_Transfer'].sum()
     belanja_operasi = df['Belanja_Operasi'].sum()
@@ -49,7 +67,6 @@ if uploaded:
     target_pad = df['Target_PAD'].sum()
     realisasi_pad = df['Realisasi_PAD'].sum()
     anggaran_belanja = df['Anggaran_Belanja'].sum()
-
 
     # Hitung rasio
     hasil = {
@@ -72,7 +89,7 @@ if uploaded:
     groq_api_key = st.text_input("Masukkan Groq API Key", type="password")
 
     if groq_api_key:
-        prompt = f"Buatkan analisis dan interpretasi profesional terhadap rasio keuangan daerah berikut: {hasil}"
+        prompt = f"Buatkan analisis profesional terhadap rasio keuangan daerah berikut: {hasil}"
 
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
@@ -89,4 +106,4 @@ if uploaded:
             ai_output = response.json()["choices"][0]["message"]["content"]
             st.write(ai_output)
         except:
-            st.error("Terjadi kesalahan pada API. Periksa API Key atau jaringan.")
+            st.error("Kesalahan API. Periksa API Key dan jaringan.")
